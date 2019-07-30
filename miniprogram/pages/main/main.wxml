@@ -1,0 +1,18 @@
+<!--pages/main/main.wxml-->
+<view class="container">
+
+  <view class="list">
+    <view class="list-item" bindtap="testCgi">
+      <text class="request-text">用户 openid 获取成功</text>
+    </view>
+    <view class="list-item" bindtap="testCgi">
+      <text class="request-text">openid :{{openid}}</text>
+    </view>
+  </view>
+
+  <view class="uploader">
+    <text class="request-text">avatarUrl:{{avatarUrl}}</text>
+    <button class="uploader-text" open-type="getUserInfo" bindgetuserinfo="onGetUserInfo">微信快捷登录</button>
+  </view>
+
+</view>
