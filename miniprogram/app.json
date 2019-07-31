@@ -1,6 +1,8 @@
 {
   "pages": [
     "pages/main/main",
+    "pages/login/login",
+    "pages/room/room",
     "pages/index/index",
     "pages/userConsole/userConsole",
     "pages/storageConsole/storageConsole",
@@ -17,8 +19,28 @@
     "backgroundColor": "#F6F6F6",
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#F6F6F6",
-    "navigationBarTitleText": "云开发 QuickStart",
+    "navigationBarTitleText": "麻将计分小工具",
     "navigationBarTextStyle": "black"
+  },
+  "usingComponents": {
+    "van-button": "./pages/dist/button/index",
+    "van-dialog": "./pages/dist/dialog/index",
+    "van-field": "./pages/dist/field/index",
+    "van-tag": "./pages/dist/tag/index",
+    "van-icon": "./pages/dist/icon/index",
+    "van-notify": "./pages/dist/notify/index",
+    "van-submit-bar": "./pages/dist/submit-bar/index",
+    "van-action-sheet": "./pages/dist/action-sheet/index",
+    "van-cell-group": "./pages/dist/cell-group/index",
+    "van-cell": "./pages/dist/cell/index",
+    "van-tree-select": "./pages/dist/tree-select/index",
+    "van-datetime-picker": "./pages/dist/datetime-picker/index",
+    "van-popup": "./pages/dist/popup/index",
+    "van-rate": "./pages/dist/rate/index",
+    "van-collapse": "./pages/dist/collapse/index",
+    "van-collapse-item": "./pages/dist/collapse-item/index",
+    "van-panel": "./pages/dist/panel/index",
+    "nav": "./pages/nav/nav"
   },
   "sitemapLocation": "sitemap.json"
 }

@@ -1,73 +1,111 @@
-const app = getApp()
-
 // pages/main/main.js
+import Dialog from '../dist/dialog/dialog'
+import Notify from '../dist/notify/notify'
+const app = getApp()
 Page({
-
-  /**
-   * 页面的初始数据
-   */
 	data: {
-		openid: '',
-		avatarUrl: '',
-		userInfo: '',
-	},
-
+    groupList: [],
+    newGroupModal: false,
+    groupName: '',
+    statusBarHeight: getApp().globalData.statusBarHeight,
+    screenWidth: getApp().globalData.screenWidth,
+  },
   /**
    * 生命周期函数--监听页面加载
    */
 	onLoad: function () {
-		this.onGetOpenid();
+		
 	},
 
-	onGetOpenid: function () {
-		// 调用云函数
-		wx.cloud.callFunction({
-			name: 'login',
-			data: {},
-			success: res => {
-				app.globalData.openid = res.result.openid
-				this.setData({
-					openid: res.result.openid
+	onShow: function () {
+    this.getGroup()
+	},
+	getGroup() {
+    const self = this
+    app.showLoading(self)
+    wx.cloud.callFunction({
+      name: 'getGroup',
+      data: {},
+      success(res) {
+        self.setData({
+          groupList: res.result
 				})
-			},
-			fail: err => {
-				wx.navigateTo({
-					url: '../deployFunctions/deployFunctions',
-				})
-			}
+				console.log("group:"+self.data.groupList[0].relateUserGroupId)
+      },
+      complete() {
+        app.hideLoading(self)
+      }
 		})
 	},
-
-	onGetUserInfo: function () {
-		wx.getSetting({
-			success: res => {
-				if (res.authSetting['scope.userInfo']) {
-					// 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框！
-					wx.getUserInfo({
-						success: res => {
-							this.setData({
-								avatarUrl: res.userInfo.avatarUrl,
-								userInfo: res.userInfo
-							})
-							this.addUser(res.userInfo)
-						}
-					})
-				}
-			}
-		})
+	goToGroupDetail (event) {
+    app.globalData.currentGroupInfo = event.currentTarget.dataset.group
+    wx.navigateTo({
+      url: `/pages/groupDetail/groupDetail`
+    })
+  },
+	onGroupModalClose() {
+    this.setData({
+      newGroupModal: false
+    })
+  },
+	showNewGroupModal() {
+    this.setData({
+      newGroupModal: true
+    })
 	},
-
-	addUser: function (userInfo) {
-		try {
-				wx.cloud.callFunction({
-				name: 'userinfoapi',
-				data: {
-					info: userInfo
-				}
-			})
-		} catch (e) {
-			console.log(e)
-		}
-	}
+	callNewGroup(event) {
+    if (event.detail === 'confirm') {
+      // 异步关闭弹窗
+      const self = this
+      if (this.data.groupName === '') {
+        Notify({
+          text: '起个名字吧',
+          duration: 1500,
+          selector: '#notify-selector',
+          backgroundColor: '#dc3545'
+        })
+        self.setData({
+          newGroupModal: true
+        })
+        self.selectComponent("#new-group-modal").stopLoading()
+        return
+      }
+      wx.cloud.callFunction({
+        name: 'createGroup',
+        data: {
+          groupName: this.data.groupName
+        },
+        success() {
+          self.setData({
+            groupName: '',
+            newGroupModal: false
+          })
+          Notify({
+            text: '新建成功',
+            duration: 1500,
+            selector: '#notify-selector',
+            backgroundColor: '#28a745'
+          })
+          self.getGroup()
+        }
+      })
+    } else {
+      this.setData({
+        newGroupModal: false
+      })
+    }
+	},
+	onGroupNameChange(event) {
+    this.setData({
+      groupName: event.detail
+    })
+  },
+  onShareAppMessage: function () {
+    return {
+      title: getApp().globalData.shareWord(),
+      path: getApp().globalData.sharePath,
+      imageUrl: getApp().globalData.imageUrl
+    }
+  },
 
 })
