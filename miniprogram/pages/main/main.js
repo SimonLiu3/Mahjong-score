@@ -30,7 +30,6 @@ Page({
         self.setData({
           groupList: res.result
 				})
-				console.log("group:"+self.data.groupList[0].relateUserGroupId)
       },
       complete() {
         app.hideLoading(self)

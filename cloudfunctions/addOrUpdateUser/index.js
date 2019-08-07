@@ -23,7 +23,7 @@ exports.main = async (event) => {
           nickName: userInfo.nickName,
           avatarUrl: userInfo.avatarUrl,
           gender: userInfo.gender,
-          updateTime: new Date().getTime()
+          updateTime: new Date()
         }
       })
     } else {
@@ -32,7 +32,8 @@ exports.main = async (event) => {
           nickName: userInfo.nickName,
           avatarUrl: userInfo.avatarUrl,
           gender: userInfo.gender,
-          updateTime: new Date().getTime(),
+          updateTime: new Date(),
+          createTime: new Date(),
           _openid: OPENID
         }
       })

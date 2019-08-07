@@ -23,6 +23,14 @@ exports.main = (event, context) => {
         userId: openId,
         invalid: false
       }
+    }),
+    // 创建第一轮
+    db.collection('round').add({
+      data: {
+        groupId: res._id,
+        sortNo: 1,
+        createTime: new Date()
+      }
     })
   })
 }
