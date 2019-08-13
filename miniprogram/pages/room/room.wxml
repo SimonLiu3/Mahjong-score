@@ -1,2 +1,54 @@
-<!--pages/room/room.wxml-->
-<text>pages/room/room.wxml</text>
+<!-- pages/room/room.wxml -->
+<nav class="nav-instance" my-class="{{theme}}-set-bg" my-icon-class="{{theme}}-set-icon-bg" showIcons="{{['back']}}"></nav>
+<view>
+  <scroll-view scroll-x="true" class="nav" scroll-left="{{navScrollLeft}}" scroll-with-animation="{{true}}">
+    <block wx:for="{{roundList}}" wx:for-index="index" wx:for-item="item">
+      <view class="nav-item {{currentRoundIndex == index ?'active':''}}" data-current="{{index}}" bindtap="selectRound">
+        第{{item.sortNo}}局
+      </view>
+    </block>
+  </scroll-view>
+  <view class="tab-box">
+    第{{roundDetail.sortNo}}局
+  </view>
+  <view class='check-list'>
+      <view wx:for="{{userList}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="one-avatar" bindtap="showScore">
+      <van-icon
+          wx:if="{{groupInfo.createBy.openId === item._openid}}"
+          name="https://677a-gzhiyi-154dd4-1256703754.tcb.qcloud.la/light.png?sign=ae740745ffd1e70912a8467c53e60a76&t=1545455766"
+          class="user-checked"
+        />
+        <image src='{{item.avatarUrl}}' class='user-avatar-list' />
+        <view class='user-name'>{{item.nickName}}</view>
+      </view>
+  </view>
+  <view class='handle-basic'>
+    <button class="handle-one handle-one-btn" open-type='share'>
+        <image class='handle-icon' src="../../images/share.png"></image>
+        <text>邀请</text>
+      </button>
+  </view>
+</view>
+<van-dialog
+    use-slot
+    async-close
+    show="{{ sendScoreModal }}"
+    show-cancel-button
+    bind:close="sendSuccess"
+    title="给钱"
+    id="send-score-modal"
+  >
+    <view class='bill-dialog-body' style='margin:50rpx 0;'>
+      <van-field
+        value="{{ score }}"
+        label="分数"
+        type = "number"
+        placeholder="请输入分数"
+        bind:change="onBillNameChange"
+      />
+      <view class="new-tip">
+        算清楚再给哦，可不要给错了~
+      </view>
+    </view>
+  </van-dialog>
+  <van-notify id="notify-selector" />

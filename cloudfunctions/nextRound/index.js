@@ -10,7 +10,8 @@ exports.main = async (event, context) => {
     groupId: event.groupId,
     sortNo: event.sortNo
   }).get()
-  if (round.data.length = 0) {
+  
+  if (!round.data) {
     await db.collection('round').add({
       data: {
         groupId: event.groupId,

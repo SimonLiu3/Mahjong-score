@@ -20,7 +20,8 @@
     "backgroundTextStyle": "light",
     "navigationBarBackgroundColor": "#F6F6F6",
     "navigationBarTitleText": "麻将计分小工具",
-    "navigationBarTextStyle": "black"
+    "navigationBarTextStyle": "black",
+    "navigationStyle":"custom"
   },
   "usingComponents": {
     "van-button": "./pages/dist/button/index",

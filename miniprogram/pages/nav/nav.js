@@ -68,12 +68,6 @@ Component({
         url: `/pages/${page}/${page}`
       })
     },
-    inDev() {
-      wx.showToast({
-        title: '功能正在开发中...',
-        icon: 'none'
-      })
-    },
     newGroup() {
       getCurrentPages()[0].showNewGroupModal()
     }

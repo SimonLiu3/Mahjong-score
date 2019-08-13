@@ -5,6 +5,19 @@ App({
     userInfo: null,
     isLoading: false,
     isEscape: true,
+    shareWord: function() {
+      return `你的好友${this.userInfo.nickName}在用这个计分，你也来试试吧 (๑>◡<๑) `
+    },
+    sharePath: '/pages/main/main',
+    skin: {
+      colorList: [
+        {
+          bg0: '#F2F2F2',
+          type: 'white-skin'
+        }
+      ],
+      index: 0
+    }
   },
   onLaunch: function (options) {
     const self = this

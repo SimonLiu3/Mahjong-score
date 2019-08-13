@@ -1,0 +1,23 @@
+<view class="login-body" id="{{theme}}">
+  <view class="login">
+  <view class='public-list' wx:if="{{isEscape}}">
+    <view class='public-header mp-info'>
+      <image src="{{inviteInfo.avatarUrl}}" class='icon'></image>
+      <text class='mp-name'>{{inviteInfo.inviter}}</text>
+    </view>
+    <view class='login-tips'>
+      <view class='header'>
+      你的好友邀你加入计分群组【{{inviteInfo.groupName}}】
+      </view>
+      <view class='tips-item'>
+        · <text>计分十分便捷\n</text>
+        · <text>告别手动计分，记入即可自动统计\n</text>
+        · <text>结果一目了然\n</text>
+        · <text>轻松一起开心娱乐\n</text>
+      </view>
+    </view>
+    <button class='btn btn-primary login-btn' bindtap='{{loading ? "" : "joinGroup"}}'>{{loading ? '正在加入...' : '立即加入'}}</button>
+  </view>
+</view>
+</view>
+<van-notify id="join-tips" />

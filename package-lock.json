@@ -1,0 +1,11 @@
+{
+  "requires": true,
+  "lockfileVersion": 1,
+  "dependencies": {
+    "vant-weapp": {
+      "version": "0.5.18",
+      "resolved": "https://registry.npmjs.org/vant-weapp/-/vant-weapp-0.5.18.tgz",
+      "integrity": "sha512-9j18vWZJBi2DidGkYU2g7z1/FZ6d2vjXAFEVkaWYoayIkyvSeS3hMRaLl5XuDcOYrLsSpAXtpS0gfOvd8+No/w=="
+    }
+  }
+}

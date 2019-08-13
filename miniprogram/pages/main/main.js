@@ -39,7 +39,7 @@ Page({
 	goToGroupDetail (event) {
     app.globalData.currentGroupInfo = event.currentTarget.dataset.group
     wx.navigateTo({
-      url: `/pages/groupDetail/groupDetail`
+      url: `/pages/room/room`
     })
   },
 	onGroupModalClose() {

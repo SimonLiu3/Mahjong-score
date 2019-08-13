@@ -9,6 +9,7 @@ exports.main = async (event, context) => {
   const openId = wxContext.OPENID
   const detailList = await db.collection('userRoundDetail').where({
     groupId: event.groupId,
+    roundId: event.roundId,
   }).get()
   const result = []
   if (detailList.data.length > 0) {
