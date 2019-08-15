@@ -12,15 +12,15 @@ exports.main = async (event, context) => {
     roundId: event.roundId,
   }).get()
   const result = []
-  if (detailList.data.length > 0) {
+  if (detailList.data) {
     for (let item of detailList.data) {
       if (item.sendUserId == openId || item.receiveUserId == openId) {
         result.push(item)
       }
     }
-    if(result.length > 0){
-      result = result.sort((a, b) => a.updateTime < b.updateTime ? 1 : -1)
-    }
+    // if(result.length > 0){
+    //   result = result.sort((a, b) => a.updateTime < b.updateTime ? 1 : -1)
+    // }
   }
   return result
 }

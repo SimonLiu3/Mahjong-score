@@ -9,10 +9,13 @@
     </block>
   </scroll-view>
   <view class="tab-box">
-    第{{roundDetail.sortNo}}局
+    <view wx:for="{{roundDetail}}" data-round="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index"  bindtap="showScore">
+      <view>接受者：{{item.receiveUserId}}</view>
+      <view>发送者：{{item.sendUserId}}</view>
+    </view>
   </view>
   <view class='check-list'>
-      <view wx:for="{{userList}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="one-avatar" bindtap="showScore">
+      <view wx:for="{{userList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="one-avatar" bindtap="showScore">
       <van-icon
           wx:if="{{groupInfo.createBy.openId === item._openid}}"
           name="https://677a-gzhiyi-154dd4-1256703754.tcb.qcloud.la/light.png?sign=ae740745ffd1e70912a8467c53e60a76&t=1545455766"
@@ -44,7 +47,7 @@
         label="分数"
         type = "number"
         placeholder="请输入分数"
-        bind:change="onBillNameChange"
+        bind:change="onScoreChange"
       />
       <view class="new-tip">
         算清楚再给哦，可不要给错了~

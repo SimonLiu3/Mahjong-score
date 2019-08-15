@@ -12,7 +12,7 @@ Page({
     roundList: [],
     userList: [],
     currentRoundIndex: 0,
-    roundDetail: {},
+    roundDetail: [],
     groupInfo: {},
     groupId: '',
     groupCreateTime: null,
@@ -20,7 +20,8 @@ Page({
     windowHeight: '',
     windowWidth: '',
     sendScoreModal : false,
-    score:''
+    score:'',
+    receiveUserId:''
   },
 
   /**
@@ -79,8 +80,10 @@ Page({
           },
           success(res) {
             self.setData({
-              roundList: res.result
+              roundList: res.result,
+              currentRoundIndex:0
             })
+            self.getDetail()
           },
           complete() {
             getApp().hideLoading(self)
@@ -101,16 +104,15 @@ Page({
       this.setData({
         currentRoundIndex: index,
         navScrollLeft: (index - 2) * singleNavWidth,
-        roundDetail: {
-          sortNo: index,
-        }
       })
+      this.getDetail()
     }
   },
   showScore(event) {
     this.setData({
       score:'',
       sendScoreModal: true,
+      receiveUserId:event.currentTarget.dataset.user._openid
     })
   },
   onShareAppMessage: function () {
@@ -150,28 +152,24 @@ Page({
           data: {
             score: self.data.score,
             groupId: self.data.groupId,
-            roundId:self.roundList[currentRoundIndex]._id
+            roundId:self.data.roundList[self.data.currentRoundIndex]._id,
+            receiveUserId:self.data.receiveUserId
           },
           success(res) {
             self.setData({
               score: '',
-              newBillModal: false
+              sendScoreModal: false
             })
-            wx.cloud.callFunction({
-              name: 'getUserRoundDetaill',
-              data: {
-                groupId: self.data.groupId,
-                roundId: self.roundList[currentRoundIndex]._id
-              },
-              success(res) {
-                self.setData({
-                  roundDetail: res.result
-                })
-              }
+            Notify({
+              text: res.msg,
+              duration: 1500,
+              selector: '#notify-selector',
+              backgroundColor: '#dc3545'
             })
+            self.getDetail()
           },
           fail(error) {
-            // console.log('错误', error)
+            console.log('错误', error)
           }
         })
       }
@@ -180,6 +178,26 @@ Page({
         sendScoreModal: false
       })
     }
+  },
+  onScoreChange(event){
+    this.setData({
+      score: event.detail
+    })
+  },
+  getDetail(){
+    let self = this
+    wx.cloud.callFunction({
+      name: 'getUserRoundDetail',
+      data: {
+        groupId: self.data.groupId,
+        roundId: self.data.roundList[self.data.currentRoundIndex]._id
+      },
+      success(res) {
+        self.setData({
+          roundDetail: res.result
+        })
+      }
+    })
   }
 
 })
