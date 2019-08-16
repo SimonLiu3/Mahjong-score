@@ -11,16 +11,16 @@ exports.main = async (event, context) => {
     groupId: event.groupId,
     roundId: event.roundId,
   }).get()
-  const result = []
-  if (detailList.data) {
-    for (let item of detailList.data) {
-      if (item.sendUserId == openId || item.receiveUserId == openId) {
-        result.push(item)
-      }
-    }
-    // if(result.length > 0){
-    //   result = result.sort((a, b) => a.updateTime < b.updateTime ? 1 : -1)
-    // }
-  }
-  return result
+  // const result = []
+  // if (detailList.data) {
+  //   for (let item of detailList.data) {
+  //     if (item.sendUserId == openId || item.receiveUserId == openId) {
+  //       result.push(item)
+  //     }
+  //   }
+  //   // if(result.length > 0){
+  //   //   result = result.sort((a, b) => a.updateTime < b.updateTime ? 1 : -1)
+  //   // }
+  // }
+  return detailList.data
 }

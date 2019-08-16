@@ -10,8 +10,11 @@
   </scroll-view>
   <view class="tab-box">
     <view wx:for="{{roundDetail}}" data-round="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index"  bindtap="showScore">
-      <view>接受者：{{item.receiveUserId}}</view>
-      <view>发送者：{{item.sendUserId}}</view>
+      <image src='{{item.sendUrl}}' class='user-avatar-list' />
+      ———{{item.score}}分———>
+      <image src='{{item.receiveUrl}}' class='user-avatar-list' />
+      <!-- <view>接受者：{{item.receiveUserId}}</view>
+      <view>发送者：{{item.sendUserId}}</view> -->
     </view>
   </view>
   <view class='check-list'>

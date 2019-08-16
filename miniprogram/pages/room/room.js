@@ -19,9 +19,9 @@ Page({
     navScrollLeft: 0,
     windowHeight: '',
     windowWidth: '',
-    sendScoreModal : false,
-    score:'',
-    receiveUserId:''
+    sendScoreModal: false,
+    score: '',
+    receiveUserId: ''
   },
 
   /**
@@ -54,7 +54,7 @@ Page({
   getData() {
     const self = this
     const { currentGroupInfo } = getApp().globalData
-    console.log("currentGroupInfo:"+currentGroupInfo._id)
+    console.log("currentGroupInfo:" + currentGroupInfo._id)
     app.showLoading(self)
     if (currentGroupInfo) {
       self.setData({
@@ -67,7 +67,7 @@ Page({
           groupId: currentGroupInfo._id
         },
         success(res) {
-          console.log('userList:'+res.result)
+          console.log('userList:' + res.result)
           self.setData({
             userList: res.result
           })
@@ -81,7 +81,7 @@ Page({
           success(res) {
             self.setData({
               roundList: res.result,
-              currentRoundIndex:0
+              currentRoundIndex: 0
             })
             self.getDetail()
           },
@@ -110,9 +110,9 @@ Page({
   },
   showScore(event) {
     this.setData({
-      score:'',
+      score: '',
       sendScoreModal: true,
-      receiveUserId:event.currentTarget.dataset.user._openid
+      receiveUserId: event.currentTarget.dataset.user._openid
     })
   },
   onShareAppMessage: function () {
@@ -131,7 +131,7 @@ Page({
       imageUrl: getApp().globalData.imageUrl
     }
   },
-  sendSuccess(event){
+  sendSuccess(event) {
     let self = this
     if (event.detail === 'confirm') {
       if (this.data.score === '') {
@@ -152,8 +152,8 @@ Page({
           data: {
             score: self.data.score,
             groupId: self.data.groupId,
-            roundId:self.data.roundList[self.data.currentRoundIndex]._id,
-            receiveUserId:self.data.receiveUserId
+            roundId: self.data.roundList[self.data.currentRoundIndex]._id,
+            receiveUserId: self.data.receiveUserId
           },
           success(res) {
             self.setData({
@@ -161,7 +161,7 @@ Page({
               sendScoreModal: false
             })
             Notify({
-              text: res.msg,
+              text: res.result.msg,
               duration: 1500,
               selector: '#notify-selector',
               backgroundColor: '#dc3545'
@@ -179,12 +179,12 @@ Page({
       })
     }
   },
-  onScoreChange(event){
+  onScoreChange(event) {
     this.setData({
       score: event.detail
     })
   },
-  getDetail(){
+  getDetail() {
     let self = this
     wx.cloud.callFunction({
       name: 'getUserRoundDetail',
@@ -193,11 +193,25 @@ Page({
         roundId: self.data.roundList[self.data.currentRoundIndex]._id
       },
       success(res) {
+        let datas = res.result
+        datas.map(item => {
+          self.data.userList.forEach(user => {
+            if (user._openid == item.sendUserId) {
+              item.sendNickName = user.nickName
+              item.sendUrl = user.avatarUrl
+            }
+            if (user._openid == item.receiveUserId) {
+              item.receiveNickName = user.nickName
+              item.receiveUrl = user.avatarUrl
+            }
+          });
+          return item;
+        })
         self.setData({
-          roundDetail: res.result
+          roundDetail: datas
         })
       }
     })
-  }
+  },
 
 })
