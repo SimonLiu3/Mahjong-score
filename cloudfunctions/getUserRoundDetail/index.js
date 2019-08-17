@@ -22,5 +22,5 @@ exports.main = async (event, context) => {
   //   //   result = result.sort((a, b) => a.updateTime < b.updateTime ? 1 : -1)
   //   // }
   // }
-  return detailList.data
+  return detailList.data.sort((a, b) => a.updateTime < b.updateTime ? 1 : -1)
 }

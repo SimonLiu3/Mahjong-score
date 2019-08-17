@@ -2,15 +2,15 @@
 <nav class="nav-instance" my-class="{{theme}}-set-bg" my-icon-class="{{theme}}-set-icon-bg" showIcons="{{['back']}}"></nav>
 <view>
   <scroll-view scroll-x="true" class="nav" scroll-left="{{navScrollLeft}}" scroll-with-animation="{{true}}">
-    <block wx:for="{{roundList}}" wx:for-index="index" wx:for-item="item" data-round="{{item}}">
-      <button wx:if="{{item.receiveUserId == openid}}" bindtap="giveBackScore()">退还</button>
+    <block wx:for="{{roundList}}" wx:for-index="index" wx:for-item="item">
       <view class="nav-item {{currentRoundIndex == index ?'active':''}}" data-current="{{index}}" bindtap="selectRound">
         第{{item.sortNo}}局
       </view>
     </block>
   </scroll-view>
   <view class="tab-box">
-    <view wx:for="{{roundDetail}}" data-round="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index"  bindtap="showScore">
+    <view wx:for="{{roundDetail}}" data-round="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+      <button wx:if="{{item.receiveUserId == openid}}"  bindtap="giveBackScore" data-round="{{item}}">退还</button>
       <image src='{{item.sendUrl}}' class='user-avatar-list' />
       ———{{item.score}}分———>
       <image src='{{item.receiveUrl}}' class='user-avatar-list' />
@@ -36,7 +36,7 @@
       </button>
   </view>
   <view class="">
-    <button bindtap="nextRound()">
+    <button bindtap="nextRound">
       下一局
     </button>
   </view>

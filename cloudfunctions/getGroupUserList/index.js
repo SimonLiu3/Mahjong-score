@@ -12,7 +12,7 @@ exports.main = async (event, context) => {
   }).field({
     userId:true
   }).get()
-  if(userIdList.data){
+  if(userIdList.data.length){
     let userIds = []
     for (let item of userIdList.data){
       console.log('userId:'+item.userId)

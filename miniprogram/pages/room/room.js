@@ -29,6 +29,9 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    this.setData({
+      openid: getApp().globalData.openid
+    })
     wx.getSystemInfo({
       success: (res) => {
         this.setData({
@@ -216,15 +219,18 @@ Page({
   },
   nextRound() {
     let self = this
-    let sortNo = this.data.roundDetail.sortNo + 1
+    let sortNo = this.data.roundList[this.data.currentRoundIndex].sortNo + 1
     let currentRoundIndex = this.data.currentRoundIndex + 1
+    console.log("sortNo",sortNo)
+    console.log("currentRoundIndex",currentRoundIndex)
     wx.cloud.callFunction({
       name: 'nextRound',
       data: {
         groupId: self.data.groupId,
         sortNo: sortNo
       },
-      success() {
+      success(res) {
+        console.log("code:"+res.result.code)
         wx.cloud.callFunction({
           name: 'getRound',
           data: {

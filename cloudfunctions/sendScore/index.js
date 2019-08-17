@@ -7,13 +7,12 @@ const db = cloud.database()
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
   const openId = wxContext.OPENID
-  console.log("-------openId:"+openId)
   const score = event.score
   const detailList = await db.collection('userRoundDetail').where({
     groupId: event.groupId,
     roundId: event.roundId,
   }).get()
-  if (detailList.data) {
+  if (detailList.data.length) {
     for(let item of detailList.data){
       if(item.sendUserId == openId && item.receiveUserId == event.receiveUserId){
         if(item.score >= score){
