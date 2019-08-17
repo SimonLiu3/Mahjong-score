@@ -21,7 +21,8 @@ Page({
     windowWidth: '',
     sendScoreModal: false,
     score: '',
-    receiveUserId: ''
+    receiveUserId: '',
+    openid: getApp().globalData.openid
   },
 
   /**
@@ -213,5 +214,45 @@ Page({
       }
     })
   },
+  nextRound() {
+    let self = this
+    let sortNo = this.data.roundDetail.sortNo + 1
+    let currentRoundIndex = this.data.currentRoundIndex + 1
+    wx.cloud.callFunction({
+      name: 'nextRound',
+      data: {
+        groupId: self.data.groupId,
+        sortNo: sortNo
+      },
+      success() {
+        wx.cloud.callFunction({
+          name: 'getRound',
+          data: {
+            groupId: self.data.groupId,
+          },
+          success(res) {
+            self.setData({
+              roundList: res.result,
+              currentRoundIndex: currentRoundIndex
+            })
+            self.getDetail()
+          },
+        })
+      }
+    })
+  },
+  // 退款
+  giveBackScore(event) {
+    let self = this
+    wx.cloud.callFunction({
+      name: 'giveBackScore',
+      data: {
+        id: event.currentTarget.dataset.round._id
+      },
+      success() {
+        self.getDetail()
+      }
+    })
+  }
 
 })
