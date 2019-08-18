@@ -9,22 +9,24 @@
     </block>
   </scroll-view>
   <view class="tab-box">
-    <view wx:for="{{roundDetail}}" data-round="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index">
-      <button wx:if="{{item.receiveUserId == openid}}"  bindtap="giveBackScore" data-round="{{item}}">退还</button>
-      <image src='{{item.sendUrl}}' class='user-avatar-list' />
-      ———{{item.score}}分———>
-      <image src='{{item.receiveUrl}}' class='user-avatar-list' />
-      <!-- <view>接受者：{{item.receiveUserId}}</view>
-      <view>发送者：{{item.sendUserId}}</view> -->
+    <view class="round-detail" wx:for="{{roundDetail}}" data-round="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+      <view class="detail-img">
+        <image src='{{item.sendUrl}}' class='user-avatar-list' />
+      </view>
+      ———{{item.score}}———>
+      <view class="detail-img">
+        <image src='{{item.receiveUrl}}' class='user-avatar-list' />
+      </view>
+      <icon wx:if="{{item.receiveUserId == openid}}" type="clear" color="red" size="30" bindtap="giveBackScore" data-round="{{item}}" />
     </view>
   </view>
   <view class='check-list'>
       <view wx:for="{{userList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="one-avatar" bindtap="showScore">
-      <van-icon
-          wx:if="{{groupInfo.createBy.openId === item._openid}}"
-          name="https://677a-gzhiyi-154dd4-1256703754.tcb.qcloud.la/light.png?sign=ae740745ffd1e70912a8467c53e60a76&t=1545455766"
+      <!-- <van-icon
+          wx:if="{{groupInfo.createBy._openid === item._openid}}"
+          name="../../images/light.png"
           class="user-checked"
-        />
+        /> -->
         <image src='{{item.avatarUrl}}' class='user-avatar-list' />
         <view class='user-name'>{{item.nickName}}</view>
       </view>
@@ -64,3 +66,4 @@
     </view>
   </van-dialog>
   <van-notify id="notify-selector" />
+  <van-dialog id="confirm-delete-detail" />

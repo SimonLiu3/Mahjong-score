@@ -21,9 +21,22 @@
 }
 .tab-box{
   background: greenyellow;
-  padding-top: 80rpx;
-  height: 50%;
+  padding-top: 40rpx;
+  height: 600rpx;
   box-sizing: border-box;
+}
+.round-detail{
+  display:flex;
+  flex-wrap:wrap;
+  align-items: center;
+  justify-content:center;
+  padding:10rpx 0 29rpx;
+  text-align:center;
+}
+.detail-img{
+  width: 100rpx;
+  position: relative;
+  margin: 0 15rpx 0 15rpx
 }
 .one-avatar {
   width: 100rpx;

@@ -71,28 +71,27 @@ Page({
           groupId: currentGroupInfo._id
         },
         success(res) {
-          console.log('userList:' + res.result)
           self.setData({
             userList: res.result
           })
+          wx.cloud.callFunction({
+            name: 'getRound',
+            data: {
+              groupId: currentGroupInfo._id
+            },
+            success(res) {
+              self.setData({
+                roundList: res.result,
+                currentRoundIndex: 0
+              })
+              self.getDetail()
+            },
+            complete() {
+              getApp().hideLoading(self)
+            }
+          })
         }
       }),
-        wx.cloud.callFunction({
-          name: 'getRound',
-          data: {
-            groupId: currentGroupInfo._id
-          },
-          success(res) {
-            self.setData({
-              roundList: res.result,
-              currentRoundIndex: 0
-            })
-            self.getDetail()
-          },
-          complete() {
-            getApp().hideLoading(self)
-          }
-        })
       this.setData({
         groupId: currentGroupInfo._id
       })
@@ -113,10 +112,14 @@ Page({
     }
   },
   showScore(event) {
+    let userId = event.currentTarget.dataset.user._openid
+    if (userId == this.data.openid) {
+      return;
+    }
     this.setData({
       score: '',
       sendScoreModal: true,
-      receiveUserId: event.currentTarget.dataset.user._openid
+      receiveUserId: userId
     })
   },
   onShareAppMessage: function () {
@@ -164,12 +167,14 @@ Page({
               score: '',
               sendScoreModal: false
             })
-            Notify({
-              text: res.result.msg,
-              duration: 1500,
-              selector: '#notify-selector',
-              backgroundColor: '#dc3545'
-            })
+            if (res.result.code == 1) {
+              Notify({
+                text: res.result.msg,
+                duration: 1500,
+                selector: '#notify-selector',
+                backgroundColor: '#dc3545'
+              })
+            }
             self.getDetail()
           },
           fail(error) {
@@ -221,8 +226,8 @@ Page({
     let self = this
     let sortNo = this.data.roundList[this.data.currentRoundIndex].sortNo + 1
     let currentRoundIndex = this.data.currentRoundIndex + 1
-    console.log("sortNo",sortNo)
-    console.log("currentRoundIndex",currentRoundIndex)
+    console.log("sortNo", sortNo)
+    console.log("currentRoundIndex", currentRoundIndex)
     wx.cloud.callFunction({
       name: 'nextRound',
       data: {
@@ -230,7 +235,7 @@ Page({
         sortNo: sortNo
       },
       success(res) {
-        console.log("code:"+res.result.code)
+        console.log("code:" + res.result.code)
         wx.cloud.callFunction({
           name: 'getRound',
           data: {
@@ -250,14 +255,25 @@ Page({
   // 退款
   giveBackScore(event) {
     let self = this
-    wx.cloud.callFunction({
-      name: 'giveBackScore',
-      data: {
-        id: event.currentTarget.dataset.round._id
-      },
-      success() {
-        self.getDetail()
-      }
+    Dialog.confirm({
+      message: `确定要退还分数给${event.currentTarget.dataset.round.sendNickName}吗?`,
+      selector: '#confirm-delete-detail'
+    }).then(() => {
+      wx.cloud.callFunction({
+        name: 'giveBackScore',
+        data: {
+          id: event.currentTarget.dataset.round._id
+        },
+        success() {
+          Notify({
+            text: '已退还',
+            duration: 1500,
+            selector: '#notify-selector',
+            backgroundColor: '#dc3545'
+          });
+          self.getDetail()
+        }
+      })
     })
   }
 
