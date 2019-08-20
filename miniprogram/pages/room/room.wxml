@@ -20,27 +20,42 @@
       <icon wx:if="{{item.receiveUserId == openid}}" type="clear" color="red" size="30" bindtap="giveBackScore" data-round="{{item}}" />
     </view>
   </view>
-  <view class='check-list'>
-      <view wx:for="{{userList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="one-avatar" bindtap="showScore">
-      <!-- <van-icon
-          wx:if="{{groupInfo.createBy._openid === item._openid}}"
-          name="../../images/light.png"
-          class="user-checked"
-        /> -->
-        <image src='{{item.avatarUrl}}' class='user-avatar-list' />
-        <view class='user-name'>{{item.nickName}}</view>
-      </view>
+  <view wx:if="{{groupInfo.deleted}}">
+    <view class='check-list'>
+        <view wx:for="{{userScoreList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="one-avatar">
+          <image src='{{item.avatarUrl}}' class='user-avatar-list' />
+          <view class='user-name'>{{item.nickName}}</view>
+          <view >总分数：{{item.totalScore}}</view>
+          <view >胜场数：{{item.totalNum}}</view>
+        </view>
+    </view>
   </view>
-  <view class='handle-basic'>
-    <button class="handle-one handle-one-btn" open-type='share'>
-        <image class='handle-icon' src="../../images/share.png"></image>
-        <text>邀请</text>
+  <view wx:else>
+    <view class='check-list'>
+        <view wx:for="{{userList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="one-avatar" bindtap="showScore">
+        <!-- <van-icon
+            wx:if="{{groupInfo.createBy._openid === item._openid}}"
+            name="../../images/light.png"
+            class="user-checked"
+          /> -->
+          <image src='{{item.avatarUrl}}' class='user-avatar-list' />
+          <view class='user-name'>{{item.nickName}}</view>
+        </view>
+    </view>
+    <view class='handle-basic'>
+      <button class="handle-one handle-one-btn" open-type='share'>
+          <image class='handle-icon' src="../../images/share.png"></image>
+          <text>邀请</text>
+        </button>
+    </view>
+    <view class="">
+      <button bindtap="nextRound">
+        下一局
       </button>
-  </view>
-  <view class="">
-    <button bindtap="nextRound">
-      下一局
-    </button>
+      <button bindtap="endGame">
+        结束
+      </button>
+    </view>
   </view>
 </view>
 <van-dialog
@@ -57,6 +72,7 @@
         value="{{ score }}"
         label="分数"
         type = "number"
+        focus = "{{autoInputScore}}"
         placeholder="请输入分数"
         bind:change="onScoreChange"
       />

@@ -17,6 +17,7 @@ Page({
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    console.log('groupId:'+options.groupId)
     if (!getApp().globalData.isEscape) {
       wx.redirectTo({
         url: '/pages/main/main'
@@ -31,13 +32,14 @@ Page({
         inviteInfo: app.globalData.shareParam
       })
     }
+    this.joinGroup()
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    getApp().setTheme(this)
+    // getApp().setTheme(this)
   },
   joinGroup () {
     const { inviteInfo } = this.data
@@ -46,7 +48,7 @@ Page({
       loading: true
     })
     wx.cloud.callFunction({
-      name: 'joinGroup',
+      name: 'jointGroup',
       data: {
         groupId: inviteInfo.groupId
       },

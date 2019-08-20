@@ -14,8 +14,7 @@ exports.main = async (event, context) => {
   let returnResult = []
   for (let item of groupList.data) {
     const oneGroup = await db.collection('group').where({
-      _id: item.groupId,
-      deleted: false
+      _id: item.groupId
     }).get()
 
     if (oneGroup.data.length > 0) {

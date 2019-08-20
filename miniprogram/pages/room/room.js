@@ -22,7 +22,9 @@ Page({
     sendScoreModal: false,
     score: '',
     receiveUserId: '',
-    openid: getApp().globalData.openid
+    openid: getApp().globalData.openid,
+    autoInputScore:false,
+    userScoreList:[]
   },
 
   /**
@@ -58,7 +60,6 @@ Page({
   getData() {
     const self = this
     const { currentGroupInfo } = getApp().globalData
-    console.log("currentGroupInfo:" + currentGroupInfo._id)
     app.showLoading(self)
     if (currentGroupInfo) {
       self.setData({
@@ -85,6 +86,9 @@ Page({
                 currentRoundIndex: 0
               })
               self.getDetail()
+              if(currentGroupInfo.deleted){
+                self.getTotal()
+              }
             },
             complete() {
               getApp().hideLoading(self)
@@ -119,7 +123,8 @@ Page({
     this.setData({
       score: '',
       sendScoreModal: true,
-      receiveUserId: userId
+      receiveUserId: userId,
+      autoInputScore:true
     })
   },
   onShareAppMessage: function () {
@@ -127,7 +132,7 @@ Page({
     const userInfo = app.globalData.userInfo
     if (getApp().globalData.isEscape) {
       return {
-        title: `${userInfo.nickName}邀你加入【${groupInfo.name}】一起计分，快加入吧 (๑>◡<๑) `,
+        title: `${userInfo.nickName}邀你加入【${groupInfo.name}】一起玩耍，快加入吧`,
         path: `/pages/share/share?groupId=${groupInfo._id}&inviter=${userInfo.nickName}&avatarUrl=${userInfo.avatarUrl}&groupName=${groupInfo.name}`,
         imageUrl: getApp().globalData.imageUrl
       }
@@ -274,6 +279,47 @@ Page({
           self.getDetail()
         }
       })
+    })
+  },
+  endGame(){
+    let self = this
+    wx.cloud.callFunction({
+      name:'closeGroup',
+      data:{
+        groupId:self.data.groupId
+      },
+      success(res){
+        self.getTotal()
+        let temp = self.data.groupInfo
+        temp.deleted = true
+        self.setData({
+          groupInfo:temp
+        })
+      }
+    })
+  },
+  getTotal(){
+    let self = this;
+    wx.cloud.callFunction({
+      name:'getTotal',
+      data:{
+        groupId:self.data.groupId
+      },
+      success(res){
+        let datas = res.result
+        datas.map(item => {
+          self.data.userList.forEach(user => {
+            if (user._openid == item.userId) {
+              item.nickName = user.nickName
+              item.avatarUrl = user.avatarUrl
+            }
+          });
+          return item;
+        })
+        self.setData({
+          userScoreList: datas
+        })
+      }
     })
   }
 

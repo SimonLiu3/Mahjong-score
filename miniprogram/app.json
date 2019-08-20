@@ -3,6 +3,7 @@
     "pages/main/main",
     "pages/login/login",
     "pages/room/room",
+    "pages/share/share",
     "pages/index/index",
     "pages/userConsole/userConsole",
     "pages/storageConsole/storageConsole",

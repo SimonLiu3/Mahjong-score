@@ -1,4 +1,4 @@
-<view class="login-body" id="{{theme}}">
+<!-- <view class="login-body" id="{{theme}}">
   <view class="login">
   <view class='public-list' wx:if="{{isEscape}}">
     <view class='public-header mp-info'>
@@ -19,5 +19,5 @@
     <button class='btn btn-primary login-btn' bindtap='{{loading ? "" : "joinGroup"}}'>{{loading ? '正在加入...' : '立即加入'}}</button>
   </view>
 </view>
-</view>
-<van-notify id="join-tips" />
+</view> -->
+<van-notify id="join-tips" /> 
