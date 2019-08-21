@@ -17,16 +17,16 @@
       <view class="detail-img">
         <image src='{{item.receiveUrl}}' class='user-avatar-list' />
       </view>
-      <icon wx:if="{{item.receiveUserId == openid}}" type="clear" color="red" size="30" bindtap="giveBackScore" data-round="{{item}}" />
+      <icon wx:if="{{item.receiveUserId == openid && !groupInfo.deleted}}" type="clear" color="red" size="30" bindtap="giveBackScore" data-round="{{item}}" />
     </view>
   </view>
   <view wx:if="{{groupInfo.deleted}}">
     <view class='check-list'>
-        <view wx:for="{{userScoreList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="one-avatar">
-          <image src='{{item.avatarUrl}}' class='user-avatar-list' />
-          <view class='user-name'>{{item.nickName}}</view>
-          <view >总分数：{{item.totalScore}}</view>
-          <view >胜场数：{{item.totalNum}}</view>
+        <view wx:for="{{userScoreList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="user-score-detail">
+          <image src='{{item.avatarUrl}}' class='user-score-img' />
+          <!-- <view class='user-name'>{{item.nickName}}</view> -->
+          <view style="font-size:24rpx">总分数：{{item.totalScore}}</view>
+          <view style="font-size:24rpx">胜场数：{{item.totalNum}}</view>
         </view>
     </view>
   </view>
@@ -38,22 +38,26 @@
             name="../../images/light.png"
             class="user-checked"
           /> -->
-          <image src='{{item.avatarUrl}}' class='user-avatar-list' />
+          <image src='{{item.avatarUrl}}' class='user-avatar-list2' />
           <view class='user-name'>{{item.nickName}}</view>
         </view>
     </view>
     <view class='handle-basic'>
+      <button bindtap="nextRound" class="handle-one handle-one-btn">
+       <image class='handle-icon' src="../../images/next.png"></image>
+          <text>下一局</text>
+      </button>
+      <button bindtap="showTotalDetail" class="handle-one handle-one-btn">
+       <image class='handle-icon' src="../../images/detail.png"></image>
+          <text>本局详情</text>
+      </button>
       <button class="handle-one handle-one-btn" open-type='share'>
           <image class='handle-icon' src="../../images/share.png"></image>
           <text>邀请</text>
         </button>
-    </view>
-    <view class="">
-      <button bindtap="nextRound">
-        下一局
-      </button>
-      <button bindtap="endGame">
-        结束
+      <button wx:if="{{groupInfo.createBy._openid == openid}}" bindtap="endGame" class="handle-one handle-one-btn">
+        <image class='handle-icon' src="../../images/end.png"></image>
+          <text>结束</text>
       </button>
     </view>
   </view>
@@ -83,3 +87,13 @@
   </van-dialog>
   <van-notify id="notify-selector" />
   <van-dialog id="confirm-delete-detail" />
+  <van-popup show="{{ showDetail }}" close-on-click-overlay="{{ true }}" bind:close="closeDetail" data-modal="hideModal" custom-style="border-radius: 20rpx;width: 90%;">
+    <view class='check-list'>
+          <view wx:for="{{userScoreList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="user-score-detail2">
+            <image src='{{item.avatarUrl}}' class='user-score-img' />
+            <!-- <view class='user-name'>{{item.nickName}}</view> -->
+            <view style="font-size:24rpx">总分数：{{item.totalScore}}</view>
+            <view style="font-size:24rpx">胜场数：{{item.totalNum}}</view>
+          </view>
+      </view>
+  </van-popup>

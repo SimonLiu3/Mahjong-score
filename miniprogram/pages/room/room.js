@@ -24,7 +24,8 @@ Page({
     receiveUserId: '',
     openid: getApp().globalData.openid,
     autoInputScore:false,
-    userScoreList:[]
+    userScoreList:[],
+    showDetail:false
   },
 
   /**
@@ -247,9 +248,11 @@ Page({
             groupId: self.data.groupId,
           },
           success(res) {
+            let singleNavWidth = self.data.windowWidth / 5;
             self.setData({
               roundList: res.result,
-              currentRoundIndex: currentRoundIndex
+              currentRoundIndex: currentRoundIndex,
+              navScrollLeft: (currentRoundIndex - 2) * singleNavWidth,
             })
             self.getDetail()
           },
@@ -283,20 +286,26 @@ Page({
   },
   endGame(){
     let self = this
-    wx.cloud.callFunction({
-      name:'closeGroup',
-      data:{
-        groupId:self.data.groupId
-      },
-      success(res){
-        self.getTotal()
-        let temp = self.data.groupInfo
-        temp.deleted = true
-        self.setData({
-          groupInfo:temp
-        })
-      }
+    Dialog.confirm({
+      message: `确定要结束本局游戏吗?`,
+      selector: '#confirm-delete-detail'
+    }).then(() => {
+      wx.cloud.callFunction({
+        name:'closeGroup',
+        data:{
+          groupId:self.data.groupId
+        },
+        success(res){
+          self.getTotal()
+          let temp = self.data.groupInfo
+          temp.deleted = true
+          self.setData({
+            groupInfo:temp
+          })
+        }
+      })
     })
+   
   },
   getTotal(){
     let self = this;
@@ -320,6 +329,17 @@ Page({
           userScoreList: datas
         })
       }
+    })
+  },
+  closeDetail(){
+    this.setData({
+      showDetail:false
+    })
+  },
+  showTotalDetail(){
+    this.getTotal()
+    this.setData({
+      showDetail:true
     })
   }
 
