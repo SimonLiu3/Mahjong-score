@@ -23,17 +23,21 @@ Page({
     score: '',
     receiveUserId: '',
     openid: getApp().globalData.openid,
-    autoInputScore:false,
-    userScoreList:[],
-    showDetail:false
+    autoInputScore: false,
+    userScoreList: [],
+    showDetail: false
   },
 
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
+    const { currentGroupInfo } = getApp().globalData
     this.setData({
-      openid: getApp().globalData.openid
+      openid: getApp().globalData.openid,
+      groupInfo: currentGroupInfo,
+      groupCreateTime: parseTime(currentGroupInfo.createTime, '{y}-{m}-{d}'),
+      groupId: currentGroupInfo._id
     })
     wx.getSystemInfo({
       success: (res) => {
@@ -42,65 +46,53 @@ Page({
           windowWidth: res.windowWidth
         })
       },
-    })
-  },
+    }),
 
-  /**
-   * 生命周期函数--监听页面初次渲染完成
-   */
-  onReady: function () {
-
+      this.getData()
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    this.getData()
+    let self = this
+    app.showLoading(self)
+    wx.cloud.callFunction({
+      name: 'getRound',
+      data: {
+        groupId: self.data.groupId
+      },
+      success(res) {
+        self.setData({
+          roundList: res.result
+        })
+        self.getDetail()
+      },
+      complete() {
+        getApp().hideLoading(self)
+      }
+    })
   },
   getData() {
-    const self = this
-    const { currentGroupInfo } = getApp().globalData
+    let self = this
     app.showLoading(self)
-    if (currentGroupInfo) {
-      self.setData({
-        groupInfo: currentGroupInfo,
-        groupCreateTime: parseTime(currentGroupInfo.createTime, '{y}-{m}-{d}')
-      })
-      wx.cloud.callFunction({
-        name: 'getGroupUserList',
-        data: {
-          groupId: currentGroupInfo._id
-        },
-        success(res) {
-          self.setData({
-            userList: res.result
-          })
-          wx.cloud.callFunction({
-            name: 'getRound',
-            data: {
-              groupId: currentGroupInfo._id
-            },
-            success(res) {
-              self.setData({
-                roundList: res.result,
-                currentRoundIndex: 0
-              })
-              self.getDetail()
-              if(currentGroupInfo.deleted){
-                self.getTotal()
-              }
-            },
-            complete() {
-              getApp().hideLoading(self)
-            }
-          })
+    wx.cloud.callFunction({
+      name: 'getGroupUserList',
+      data: {
+        groupId: self.data.groupId
+      },
+      success(res) {
+        self.setData({
+          userList: res.result
+        })
+        if (self.data.groupInfo.deleted) {
+          self.getTotal()
         }
-      }),
-      this.setData({
-        groupId: currentGroupInfo._id
-      })
-    }
+      },
+      complete() {
+        getApp().hideLoading(self)
+      }
+    })
   },
   selectRound(event) {
     const self = this
@@ -125,7 +117,7 @@ Page({
       score: '',
       sendScoreModal: true,
       receiveUserId: userId,
-      autoInputScore:true
+      autoInputScore: true
     })
   },
   onShareAppMessage: function () {
@@ -284,37 +276,37 @@ Page({
       })
     })
   },
-  endGame(){
+  endGame() {
     let self = this
     Dialog.confirm({
       message: `确定要结束本局游戏吗?`,
       selector: '#confirm-delete-detail'
     }).then(() => {
       wx.cloud.callFunction({
-        name:'closeGroup',
-        data:{
-          groupId:self.data.groupId
+        name: 'closeGroup',
+        data: {
+          groupId: self.data.groupId
         },
-        success(res){
+        success(res) {
           self.getTotal()
           let temp = self.data.groupInfo
           temp.deleted = true
           self.setData({
-            groupInfo:temp
+            groupInfo: temp
           })
         }
       })
     })
-   
+
   },
-  getTotal(){
+  getTotal() {
     let self = this;
     wx.cloud.callFunction({
-      name:'getTotal',
-      data:{
-        groupId:self.data.groupId
+      name: 'getTotal',
+      data: {
+        groupId: self.data.groupId
       },
-      success(res){
+      success(res) {
         let datas = res.result
         datas.map(item => {
           self.data.userList.forEach(user => {
@@ -331,15 +323,15 @@ Page({
       }
     })
   },
-  closeDetail(){
+  closeDetail() {
     this.setData({
-      showDetail:false
+      showDetail: false
     })
   },
-  showTotalDetail(){
+  showTotalDetail() {
     this.getTotal()
     this.setData({
-      showDetail:true
+      showDetail: true
     })
   }
 

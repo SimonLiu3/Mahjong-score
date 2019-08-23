@@ -9,15 +9,20 @@
     </block>
   </scroll-view>
   <view class="tab-box">
-    <view class="round-detail" wx:for="{{roundDetail}}" data-round="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index">
-      <view class="detail-img">
-        <image src='{{item.sendUrl}}' class='user-avatar-list' />
+    <view wx:if="{{roundDetail != null && roundDetail.length > 0}}">
+      <view class="round-detail" wx:for="{{roundDetail}}" data-round="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index">
+        <view class="detail-img">
+          <image src='{{item.sendUrl}}' class='user-avatar-list' />
+        </view>
+        ———{{item.score}}———>
+        <view class="detail-img">
+          <image src='{{item.receiveUrl}}' class='user-avatar-list' />
+        </view>
+        <icon wx:if="{{item.receiveUserId == openid && !groupInfo.deleted}}" type="clear" color="red" size="30" bindtap="giveBackScore" data-round="{{item}}" />
       </view>
-      ———{{item.score}}———>
-      <view class="detail-img">
-        <image src='{{item.receiveUrl}}' class='user-avatar-list' />
-      </view>
-      <icon wx:if="{{item.receiveUserId == openid && !groupInfo.deleted}}" type="clear" color="red" size="30" bindtap="giveBackScore" data-round="{{item}}" />
+    </view>
+    <view wx:else class="round-detail-empty">
+      空
     </view>
   </view>
   <view wx:if="{{groupInfo.deleted}}">
