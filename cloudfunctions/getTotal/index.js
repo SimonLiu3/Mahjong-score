@@ -22,16 +22,11 @@ exports.main = async (event, context) => {
     detail.totalNum = 0;
     userDetailList.push(detail)
   }
-  
-  let deskDetail = {}
-  deskDetail.userId = "TaiBanUserId"
-  deskDetail.totalScore = 0;
-  deskDetail.totalNum = 0;
+
 
   if (roundList.data.length) {
     let roundIdList = []
     for (let item of roundList.data) {
-      // 玩家信息
       for (let detail of userDetailList) {
         if (item.sendUserId == detail.userId) {
           detail.totalScore = detail.totalScore * 1 - item.score * 1
@@ -43,18 +38,8 @@ exports.main = async (event, context) => {
           }
         }
       }
-      // 台板信息
-      if(item.receiveUserId == deskDetail.userId){
-        deskDetail.totalScore = deskDetail.totalScore * 1 + item.score * 1
-        deskDetail.totalNum = deskDetail.totalNum * 1 + 1
-      }
     }
   }
-  // 排序
-  userDetailList == [] ? userDetailList : userDetailList.sort((a, b) => a.totalScore < b.totalScore ? 1 : -1)
-  // 返回数据
-  let detailInfo= {}
-  detailInfo.userDetailList = userDetailList
-  detailInfo.deskDetail = deskDetail
-  return detailInfo
+
+  return userDetailList == [] ? userDetailList : userDetailList.sort((a, b) => a.totalScore < b.totalScore ? 1 : -1)
 }
