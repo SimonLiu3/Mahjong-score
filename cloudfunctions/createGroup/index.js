@@ -9,6 +9,7 @@ exports.main = (event, context) => {
   db.collection('group').add({
     data: {
       name: event.groupName,
+      supportDesk:event.supportDesk,
       createBy: openId,
       createTime: new Date(),
       deleted: false,

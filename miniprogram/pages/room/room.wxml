@@ -33,6 +33,11 @@
           <view style="font-size:24rpx">总分数：{{item.totalScore}}</view>
           <view style="font-size:24rpx">胜场数：{{item.totalNum}}</view>
         </view>
+        <view wx:if="{{groupInfo.supportDesk}}" class="user-score-detail">
+          <image src='{{taiBanUrl}}' class='user-score-img'/>
+          <view style="font-size:24rpx">台板分数：{{taiBanScore}}</view>
+          <view style="font-size:24rpx">台板场数：{{taiBanNum}}</view>
+       </view>
     </view>
   </view>
   <view wx:else>
@@ -40,11 +45,15 @@
         <view wx:for="{{userList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="one-avatar" bindtap="showScore">
         <!-- <van-icon
             wx:if="{{groupInfo.createBy._openid === item._openid}}"
-            name="../../images/light.png"
+            name="/images/light.png"
             class="user-checked"
           /> -->
           <image src='{{item.avatarUrl}}' class='user-avatar-list2' />
           <view class='user-name'>{{item.nickName}}</view>
+        </view>
+        <view wx:if="{{groupInfo.supportDesk}}" class="one-avatar" bindtap="showScoreT">
+          <image src='{{taiBanUrl}}' class='user-avatar-list2'/>
+          <view class='user-name'>台板</view>
         </view>
     </view>
     <view class='handle-basic'>
@@ -86,7 +95,7 @@
         bind:change="onScoreChange"
       />
       <view class="new-tip">
-        算清楚再给哦，可不要给错了~
+        输入你要给的分数
       </view>
     </view>
   </van-dialog>
@@ -94,11 +103,16 @@
   <van-dialog id="confirm-delete-detail" />
   <van-popup show="{{ showDetail }}" close-on-click-overlay="{{ true }}" bind:close="closeDetail" data-modal="hideModal" custom-style="border-radius: 20rpx;width: 90%;">
     <view class='check-list'>
-          <view wx:for="{{userScoreList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="user-score-detail2">
-            <image src='{{item.avatarUrl}}' class='user-score-img' />
-            <!-- <view class='user-name'>{{item.nickName}}</view> -->
-            <view style="font-size:24rpx">总分数：{{item.totalScore}}</view>
-            <view style="font-size:24rpx">胜场数：{{item.totalNum}}</view>
-          </view>
+      <view wx:for="{{userScoreList}}" data-user="{{item}}" wx:for-index="index" wx:for-item="item" wx:key="index" class="user-score-detail2">
+        <image src='{{item.avatarUrl}}' class='user-score-img' />
+        <!-- <view class='user-name'>{{item.nickName}}</view> -->
+        <view style="font-size:24rpx">总分数：{{item.totalScore}}</view>
+        <view style="font-size:24rpx">胜场数：{{item.totalNum}}</view>
       </view>
+      <view wx:if="{{groupInfo.supportDesk}}" class="user-score-detail2">
+        <image src='{{taiBanUrl}}' class='user-score-img'/>
+        <view style="font-size:24rpx">台板分数：{{taiBanScore}}</view>
+        <view style="font-size:24rpx">台板场数：{{taiBanNum}}</view>
+      </view>
+    </view>
   </van-popup>

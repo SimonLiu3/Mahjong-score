@@ -32,6 +32,7 @@
     "van-collapse": "./pages/dist/collapse/index",
     "van-collapse-item": "./pages/dist/collapse-item/index",
     "van-panel": "./pages/dist/panel/index",
+    "van-switch":"./pages/dist/switch/index",
     "nav": "./pages/nav/nav"
   },
   "sitemapLocation": "sitemap.json"

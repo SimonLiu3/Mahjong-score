@@ -25,7 +25,10 @@ Page({
     openid: getApp().globalData.openid,
     autoInputScore: false,
     userScoreList: [],
-    showDetail: false
+    showDetail: false,
+    taiBanUrl:'/images/taiban.png',
+    taiBanScore:0,
+    taiBanNum:0
   },
 
   /**
@@ -47,7 +50,6 @@ Page({
         })
       },
     }),
-
       this.getData()
   },
 
@@ -117,6 +119,14 @@ Page({
       score: '',
       sendScoreModal: true,
       receiveUserId: userId,
+      autoInputScore: true
+    })
+  },
+  showScoreT(){
+    this.setData({
+      score: '',
+      sendScoreModal: true,
+      receiveUserId: 'TaiBanUserId',
       autoInputScore: true
     })
   },
@@ -212,6 +222,9 @@ Page({
               item.receiveUrl = user.avatarUrl
             }
           });
+          if(item.receiveUserId == 'TaiBanUserId'){
+            item.receiveUrl = self.data.taiBanUrl
+          }
           return item;
         })
         self.setData({
@@ -304,11 +317,11 @@ Page({
     wx.cloud.callFunction({
       name: 'getTotal',
       data: {
-        groupId: self.data.groupId
+        groupId: self.data.groupId,
       },
       success(res) {
         let datas = res.result
-        datas.map(item => {
+        datas.userDetailList.map(item => {
           self.data.userList.forEach(user => {
             if (user._openid == item.userId) {
               item.nickName = user.nickName
@@ -318,8 +331,14 @@ Page({
           return item;
         })
         self.setData({
-          userScoreList: datas
+          userScoreList: datas.userDetailList
         })
+        if(self.data.groupInfo.supportDesk){
+          self.setData({
+            taiBanScore:datas.deskDetail.totalScore,
+            taiBanNum:datas.deskDetail.totalNum
+          })
+        }
       }
     })
   },

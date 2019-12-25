@@ -3,24 +3,25 @@ import Dialog from '../dist/dialog/dialog'
 import Notify from '../dist/notify/notify'
 const app = getApp()
 Page({
-	data: {
+  data: {
     groupList: [],
     newGroupModal: false,
     groupName: '',
     statusBarHeight: getApp().globalData.statusBarHeight,
     screenWidth: getApp().globalData.screenWidth,
+    supportDesk: false,
   },
   /**
    * 生命周期函数--监听页面加载
    */
-	onLoad: function (options) {
-    
-	},
+  onLoad: function (options) {
 
-	onShow: function () {
+  },
+
+  onShow: function () {
     this.getGroup()
-	},
-	getGroup() {
+  },
+  getGroup() {
     const self = this
     app.showLoading(self)
     wx.cloud.callFunction({
@@ -29,30 +30,30 @@ Page({
       success(res) {
         self.setData({
           groupList: res.result
-				})
+        })
       },
       complete() {
         app.hideLoading(self)
       }
-		})
-	},
-	goToGroupDetail (event) {
+    })
+  },
+  goToGroupDetail(event) {
     app.globalData.currentGroupInfo = event.currentTarget.dataset.group
     wx.navigateTo({
       url: `/pages/room/room`
     })
   },
-	onGroupModalClose() {
+  onGroupModalClose() {
     this.setData({
       newGroupModal: false
     })
   },
-	showNewGroupModal() {
+  showNewGroupModal() {
     this.setData({
       newGroupModal: true
     })
-	},
-	callNewGroup(event) {
+  },
+  callNewGroup(event) {
     if (event.detail === 'confirm') {
       // 异步关闭弹窗
       const self = this
@@ -72,7 +73,8 @@ Page({
       wx.cloud.callFunction({
         name: 'createGroup',
         data: {
-          groupName: this.data.groupName
+          groupName: this.data.groupName,
+          supportDesk: this.data.supportDesk
         },
         success() {
           self.setData({
@@ -93,8 +95,8 @@ Page({
         newGroupModal: false
       })
     }
-	},
-	onGroupNameChange(event) {
+  },
+  onGroupNameChange(event) {
     this.setData({
       groupName: event.detail
     })
@@ -106,5 +108,8 @@ Page({
       imageUrl: getApp().globalData.imageUrl
     }
   },
+  onChange: function ({ detail }) {
+    this.setData({ supportDesk: detail });
+  }
 
 })

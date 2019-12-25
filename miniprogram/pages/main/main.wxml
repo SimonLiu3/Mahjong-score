@@ -38,10 +38,14 @@
       value="{{ groupName }}"
       label="房间名"
       maxlength="{{20}}"
-      placeholder="名字取得好，赢钱赢得多"
+      placeholder="取个好名字吧"
       bind:change="onGroupNameChange"
       focus="{{false}}"
     />
+    <view style='margin:50rpx 0 0 40rpx;'>
+      台费：<van-switch checked="{{supportDesk}}" bind:change="onChange" size="16px"/>
+    </view>
+      
     <view class="new-tip">
       新建后进入房间通过邀请让好友加入！
     </view>
