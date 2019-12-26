@@ -44,5 +44,11 @@ Page({
         backgroundColor: '#dc3545'
       });
     }
+  },
+  cancelLogin(event){
+    const { backPath } = this.data
+    wx.redirectTo({
+      url: `${backPath === '' ? '/pages/main/main' : `/pages/${backPath}/${backPath}`}`
+    })
   }
 })

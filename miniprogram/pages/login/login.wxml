@@ -16,6 +16,9 @@
       <button class='btn btn-primary login-btn' open-type='getUserInfo' bindgetuserinfo="onGotUserInfo">
         确认登录
       </button>
+      <button class='btn login-btn' type="warn" bindtap="cancelLogin">
+        取消登录
+      </button>
     </view>
   </view>
 </view>
