@@ -44,3 +44,7 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.login-image{
+  position: absolute;
+  right: 60rpx;
+}

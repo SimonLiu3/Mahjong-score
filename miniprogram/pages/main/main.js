@@ -10,12 +10,27 @@ Page({
     statusBarHeight: getApp().globalData.statusBarHeight,
     screenWidth: getApp().globalData.screenWidth,
     supportDesk: false,
+    userInfo:getApp().globalData.userInfo,
   },
   /**
    * 生命周期函数--监听页面加载
    */
   onLoad: function (options) {
-
+    let self = this
+    wx.getSetting({
+      success(settingRes) {
+        // 已经授权
+        if (settingRes.authSetting['scope.userInfo']) {
+          wx.getUserInfo({
+            success(infoRes) {
+              self.setData({
+                userInfo:infoRes.userInfo,
+              })
+            }
+          })
+        }
+      }
+    })
   },
 
   onShow: function () {
@@ -110,6 +125,10 @@ Page({
   },
   onChange: function ({ detail }) {
     this.setData({ supportDesk: detail });
+  },
+  goToLogin:function(){
+    wx.navigateTo({
+      url: `/pages/login/login`
+    })
   }
-
 })

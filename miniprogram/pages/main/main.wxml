@@ -5,6 +5,12 @@
     <view class='public-header'>
       <image class='public-icon' src="../../images/group.png"></image>
       我的房间
+      <view wx:if="{{userInfo.avatarUrl}}" class="login-image">
+          <image src='{{userInfo.avatarUrl}}' class='creater'></image>
+      </view>
+      <view wx:else class="login-image" bindtap="goToLogin">
+        <image src='../../images/click-login.png' class='creater'></image>
+      </view>
     </view>
     <view
       class='public-item {{index === 0 ? "top" : ""}} {{index === groupList.length - 1 ? "public-item-bottom" : ""}}'

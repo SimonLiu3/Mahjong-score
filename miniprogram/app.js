@@ -76,11 +76,12 @@ App({
               })
             }
           })
-        } else {
-          wx.reLaunch({
-            url: `/pages/login/login?back=${options.path.split('/')[1]}`
-          })
         }
+        //  else {
+        //   wx.reLaunch({
+        //     url: `/pages/login/login?back=${options.path.split('/')[1]}`
+        //   })
+        // }
       }
     })
   },
