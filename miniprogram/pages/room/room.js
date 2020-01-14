@@ -3,6 +3,8 @@ import { parseTime } from '../../utils/parseTime.js'
 import Dialog from '../dist/dialog/dialog'
 import Notify from '../dist/notify/notify'
 const app = getApp()
+const db = wx.cloud.database()
+const _ = db.command
 Page({
 
   /**
@@ -13,6 +15,7 @@ Page({
     userList: [],
     currentRoundIndex: 0,
     roundDetail: [],
+    roundDetailList: [],
     groupInfo: {},
     groupId: '',
     groupCreateTime: null,
@@ -26,9 +29,10 @@ Page({
     autoInputScore: false,
     userScoreList: [],
     showDetail: false,
-    taiBanUrl:'/images/taiban.png',
-    taiBanScore:0,
-    taiBanNum:0
+    taiBanUrl: '/images/taiban.png',
+    taiBanScore: 0,
+    taiBanNum: 0,
+    isNextRound: false
   },
 
   /**
@@ -50,59 +54,125 @@ Page({
         })
       },
     }),
-      this.getData()
+      this.getUserWatch()
   },
 
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-    let self = this
-    app.showLoading(self)
-    wx.cloud.callFunction({
-      name: 'getRound',
-      data: {
-        groupId: self.data.groupId
-      },
-      success(res) {
-        self.setData({
-          roundList: res.result
-        })
-        self.getDetail()
-      },
-      complete() {
-        getApp().hideLoading(self)
-      }
-    })
+
   },
-  getData() {
+  getUserWatch() {
     let self = this
-    app.showLoading(self)
-    wx.cloud.callFunction({
-      name: 'getGroupUserList',
-      data: {
+    const watcher = db.collection('userGroup')
+      .where({
         groupId: self.data.groupId
-      },
-      success(res) {
-        self.setData({
-          userList: res.result
-        })
-        if (self.data.groupInfo.deleted) {
-          self.getTotal()
+      })
+      .watch({
+        onChange: function (snapshot) {
+          let userIdList = []
+          snapshot.docs.forEach(user => {
+            userIdList.push(user.userId)
+          })
+          db.collection('userInfo')
+            .where({
+              _openid: _.in(userIdList)
+            }).get({
+              success: function (res) {
+                self.setData({
+                  userList: res.data
+                })
+                if (snapshot.type == 'init') {
+                  self.getRoundWatch()
+                  self.getGroupWatch()
+                }
+              }
+            })
+        },
+        onError: function (err) {
+          console.error('the watch closed because of error', err)
         }
-      },
-      complete() {
-        getApp().hideLoading(self)
-      }
-    })
+      })
   },
+  getGroupWatch: function () {
+    let self = this
+    const watch = db.collection('group')
+      .where({
+        _id: self.data.groupId
+      })
+      .watch({
+        onChange: function (snapshot) {
+          let groupInfo = self.data.groupInfo
+          groupInfo.deleted = snapshot.docs[0].deleted
+          self.setData({
+            groupInfo: groupInfo
+          })
+          if (self.data.groupInfo.deleted) {
+            self.getTotal()
+          }
+        },
+        onError: function (err) {
+          console.error('the watch closed because of error', err)
+        }
+      })
+  },
+  getRoundWatch: function () {
+    let self = this
+    const watcher = db.collection('round')
+      .where({
+        groupId: self.data.groupId
+      })
+      .orderBy('sortNo','asc')
+      .watch({
+        onChange: function (snapshot) {
+          let singleNavWidth = self.data.windowWidth / 5
+          let currentRoundIndex = self.data.currentRoundIndex
+          if (self.data.isNextRound) {
+            currentRoundIndex += 1
+          }
+          self.setData({
+            roundList: snapshot.docs,
+            navScrollLeft: (currentRoundIndex - 2) * singleNavWidth,
+            currentRoundIndex: currentRoundIndex,
+            isNextRound: false
+          })
+          if (snapshot.type == 'init') {
+            self.getRoundDetailWatch()
+          }
+          self.getDetail()
+        },
+        onError: function (err) {
+          console.error('the watch closed because of error', err)
+        }
+      })
+  },
+  getRoundDetailWatch: function () {
+    let self = this
+    const watcher = db.collection('userRoundDetail')
+      .where({
+        groupId: self.data.groupId
+      })
+      .watch({
+        onChange: function (snapshot) {
+          self.setData({
+            roundDetailList: snapshot.docs
+          })
+          self.getDetail()
+        },
+        onError: function (err) {
+          console.error('the watch closed because of error', err)
+        }
+      })
+  },
+
+
   selectRound(event) {
-    const self = this
     let index = event.currentTarget.dataset.current;
     if (this.data.currentRoundIndex == index) {
       return false;
     } else {
-      const singleNavWidth = this.data.windowWidth / 5;
+      let singleNavWidth = this.data.windowWidth / 5;
       this.setData({
         currentRoundIndex: index,
         navScrollLeft: (index - 2) * singleNavWidth,
@@ -122,7 +192,7 @@ Page({
       autoInputScore: true
     })
   },
-  showScoreT(){
+  showScoreT() {
     this.setData({
       score: '',
       sendScoreModal: true,
@@ -183,7 +253,6 @@ Page({
                 backgroundColor: '#dc3545'
               })
             }
-            self.getDetail()
           },
           fail(error) {
             console.log('错误', error)
@@ -203,67 +272,63 @@ Page({
   },
   getDetail() {
     let self = this
-    wx.cloud.callFunction({
-      name: 'getUserRoundDetail',
-      data: {
-        groupId: self.data.groupId,
-        roundId: self.data.roundList[self.data.currentRoundIndex]._id
-      },
-      success(res) {
-        let datas = res.result
-        datas.map(item => {
-          self.data.userList.forEach(user => {
-            if (user._openid == item.sendUserId) {
-              item.sendNickName = user.nickName
-              item.sendUrl = user.avatarUrl
-            }
-            if (user._openid == item.receiveUserId) {
-              item.receiveNickName = user.nickName
-              item.receiveUrl = user.avatarUrl
-            }
-          });
-          if(item.receiveUserId == 'TaiBanUserId'){
-            item.receiveUrl = self.data.taiBanUrl
-          }
-          return item;
-        })
-        self.setData({
-          roundDetail: datas
-        })
+    let detail = this.data.roundDetailList.filter(function (item) {
+      return item.roundId == self.data.roundList[self.data.currentRoundIndex]._id
+    })
+    detail.sort(function(a,b){
+      return a._id > b._id
+    })
+    detail.map(item => {
+      self.data.userList.forEach(user => {
+        if (user._openid == item.sendUserId) {
+          item.sendNickName = user.nickName
+          item.sendUrl = user.avatarUrl
+        }
+        if (user._openid == item.receiveUserId) {
+          item.receiveNickName = user.nickName
+          item.receiveUrl = user.avatarUrl
+        }
+      });
+      if (item.receiveUserId == 'TaiBanUserId') {
+        item.receiveUrl = self.data.taiBanUrl
       }
+      return item;
+    })
+    self.setData({
+      roundDetail: detail
     })
   },
   nextRound() {
     let self = this
     let sortNo = this.data.roundList[this.data.currentRoundIndex].sortNo + 1
     let currentRoundIndex = this.data.currentRoundIndex + 1
-    console.log("sortNo", sortNo)
-    console.log("currentRoundIndex", currentRoundIndex)
-    wx.cloud.callFunction({
-      name: 'nextRound',
-      data: {
-        groupId: self.data.groupId,
-        sortNo: sortNo
-      },
-      success(res) {
-        console.log("code:" + res.result.code)
-        wx.cloud.callFunction({
-          name: 'getRound',
-          data: {
-            groupId: self.data.groupId,
-          },
-          success(res) {
-            let singleNavWidth = self.data.windowWidth / 5;
-            self.setData({
-              roundList: res.result,
-              currentRoundIndex: currentRoundIndex,
-              navScrollLeft: (currentRoundIndex - 2) * singleNavWidth,
-            })
-            self.getDetail()
-          },
-        })
-      }
-    })
+    if (currentRoundIndex <= this.data.roundList.length - 1) {
+      let singleNavWidth = self.data.windowWidth / 5
+      this.setData({
+        currentRoundIndex: currentRoundIndex,
+        navScrollLeft: (currentRoundIndex - 2) * singleNavWidth,
+      })
+      this.getDetail()
+    } else {
+      this.setData({
+        isNextRound: true
+      })
+      wx.cloud.callFunction({
+        name: 'nextRound',
+        data: {
+          groupId: self.data.groupId,
+          sortNo: sortNo
+        },
+        success(res) {
+
+        },
+        error(err) {
+          this.setData({
+            isNextRound: false
+          })
+        }
+      })
+    }
   },
   // 退款
   giveBackScore(event) {
@@ -284,7 +349,6 @@ Page({
             selector: '#notify-selector',
             backgroundColor: '#dc3545'
           });
-          self.getDetail()
         }
       })
     })
@@ -301,16 +365,10 @@ Page({
           groupId: self.data.groupId
         },
         success(res) {
-          self.getTotal()
-          let temp = self.data.groupInfo
-          temp.deleted = true
-          self.setData({
-            groupInfo: temp
-          })
+          
         }
       })
     })
-
   },
   getTotal() {
     let self = this;
@@ -333,10 +391,10 @@ Page({
         self.setData({
           userScoreList: datas.userDetailList
         })
-        if(self.data.groupInfo.supportDesk){
+        if (self.data.groupInfo.supportDesk) {
           self.setData({
-            taiBanScore:datas.deskDetail.totalScore,
-            taiBanNum:datas.deskDetail.totalNum
+            taiBanScore: datas.deskDetail.totalScore,
+            taiBanNum: datas.deskDetail.totalNum
           })
         }
       }

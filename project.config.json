@@ -10,7 +10,7 @@
 	},
 	"appid": "wx0d82ca587df6a622",
 	"projectname": "Mahjong-score",
-	"libVersion": "2.2.5",
+	"libVersion": "2.9.1",
 	"simulatorType": "wechat",
 	"simulatorPluginLibVersion": {},
 	"condition": {

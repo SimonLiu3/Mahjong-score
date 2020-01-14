@@ -52,7 +52,7 @@
   width: 100rpx;
   height: 100rpx;
   position: relative;
-  margin:10rpx 20rpx 25rpx;
+  margin:10rpx 20rpx 45rpx;
 }
 .user-score-detail {
   width: 200rpx;
