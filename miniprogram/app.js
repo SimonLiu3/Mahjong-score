@@ -9,7 +9,7 @@ App({
     shareWord: function() {
       return `你的好友${this.userInfo.nickName}在用这个计分，你也来试试吧`
     },
-    sharePath: '/pages/main/main',
+    sharePath: '/pages/home/home',
     imageUrl:'/images/cover.png',
     skin: {
       colorList: [

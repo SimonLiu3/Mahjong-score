@@ -32,9 +32,12 @@ Page({
           info: userInfo
         }
       })
-      wx.redirectTo({
-        url: `${backPath === '' ? '/pages/main/main' : `/pages/${backPath}/${backPath}`}`
-      })
+      // wx.redirectTo({
+      //   url: `${backPath === '' ? '../../custom-tab-bar/index' : `/pages/${backPath}/${backPath}`}`
+      // })
+      wx.switchTab({  
+        url: '/pages/main/main'  
+      }); 
     } else {
       // 加入提示
       Notify({
@@ -47,8 +50,8 @@ Page({
   },
   cancelLogin(event){
     const { backPath } = this.data
-    wx.redirectTo({
-      url: `${backPath === '' ? '/pages/main/main' : `/pages/${backPath}/${backPath}`}`
-    })
+    wx.switchTab({  
+      url: '/pages/main/main'  
+    }); 
   }
 })

@@ -5,6 +5,10 @@ import Notify from '../dist/notify/notify'
 const app = getApp()
 const db = wx.cloud.database()
 const _ = db.command
+let userWatch = null
+let groupWatch = null
+let roundWatch = null
+let roundDetailWatch = null
 Page({
 
   /**
@@ -53,19 +57,40 @@ Page({
           windowWidth: res.windowWidth
         })
       },
-    }),
-      this.getUserWatch()
+    })
+      // this.getUserWatch()
   },
-
   /**
    * 生命周期函数--监听页面显示
    */
   onShow: function () {
-
+    this.getUserWatch();
+  },
+  onHide:function(){
+    console.log("--------------onHide-------------")
+    this.closeWatch()
+  },
+  onUnload:function(){
+    console.log("--------------onOnLoad-------------")
+    this.closeWatch()
+  },
+  closeWatch(){
+    userWatch && userWatch.close().then(() => {
+      　userWatch = null
+    })
+    groupWatch && groupWatch.close().then(() => {
+      groupWatch = null
+    })
+    roundWatch && roundWatch.close().then(() => {
+      roundWatch = null
+    })
+    roundDetailWatch && roundDetailWatch.close().then(() => {
+      roundDetailWatch = null
+    })
   },
   getUserWatch() {
     let self = this
-    const watcher = db.collection('userGroup')
+    userWatch = db.collection('userGroup')
       .where({
         groupId: self.data.groupId
       })
@@ -97,7 +122,7 @@ Page({
   },
   getGroupWatch: function () {
     let self = this
-    const watch = db.collection('group')
+    groupWatch = db.collection('group')
       .where({
         _id: self.data.groupId
       })
@@ -119,7 +144,7 @@ Page({
   },
   getRoundWatch: function () {
     let self = this
-    const watcher = db.collection('round')
+    roundWatch = db.collection('round')
       .where({
         groupId: self.data.groupId
       })
@@ -149,12 +174,13 @@ Page({
   },
   getRoundDetailWatch: function () {
     let self = this
-    const watcher = db.collection('userRoundDetail')
+    roundDetailWatch = db.collection('userRoundDetail')
       .where({
         groupId: self.data.groupId
       })
       .watch({
         onChange: function (snapshot) {
+          console.log("------------------getRoundDetailWatch--------------------------")
           self.setData({
             roundDetailList: snapshot.docs
           })

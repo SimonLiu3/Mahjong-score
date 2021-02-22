@@ -17,7 +17,8 @@ Component({
     showBackIcon: false,
     showHomeIcons: false,
     isEscape: getApp().globalData.isEscape,
-    showTheme: true
+    showTheme: true,
+    personal:false
   },
   ready() {
     let {

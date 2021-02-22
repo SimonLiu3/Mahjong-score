@@ -4,7 +4,8 @@
     "pages/login/login",
     "pages/room/room",
     "pages/share/share",
-    "pages/chooseLib/chooseLib"
+    "pages/chooseLib/chooseLib",
+    "pages/personal/personal"
   ],
   "window": {
     "backgroundColor": "#F6F6F6",
@@ -13,6 +14,19 @@
     "navigationBarTitleText": "麻将计分小工具",
     "navigationBarTextStyle": "black",
     "navigationStyle":"custom"
+  },
+  "tabBar": {
+    "custom": true,
+    "color": "#000000",
+    "selectedColor": "#000000",
+    "backgroundColor": "#000000",
+    "list": [{
+      "pagePath": "pages/main/main",
+      "text": "主页"
+    }, {
+      "pagePath": "pages/personal/personal",
+      "text": "我的"
+    }]
   },
   "usingComponents": {
     "van-button": "./pages/dist/button/index",
@@ -33,7 +47,12 @@
     "van-collapse-item": "./pages/dist/collapse-item/index",
     "van-panel": "./pages/dist/panel/index",
     "van-switch":"./pages/dist/switch/index",
-    "nav": "./pages/nav/nav"
+    "van-nav-bar":"./pages/dist/nav-bar/index",
+    "van-tabs":"./pages/dist/tabs/index",
+    "van-tab":"./pages/dist/tab/index",
+    "nav": "./pages/nav/nav",
+    "main":"./pages/main/main",
+    "personal":"./pages/personal/personal"
   },
   "sitemapLocation": "sitemap.json"
 }

@@ -5,6 +5,7 @@
   padding: 40rpx 0;
   overflow-x: hidden;
   overflow-y: auto;
+  background-color: #F7F8FA;
 }
 .creater {
   width:50rpx;
@@ -47,4 +48,17 @@
 .login-image{
   position: absolute;
   right: 60rpx;
+}
+.list-icon image{
+  border-radius: 50%;
+}
+.list-title{
+  font-size: 30rpx;
+  color: #313131;
+  max-width: 400rpx;
+  font-weight: bold;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-left: 20rpx;
 }

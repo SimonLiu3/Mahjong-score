@@ -1,0 +1,7 @@
+{
+  "component": true,
+  "usingComponents": {
+    "van-tabbar":"../pages/dist/tabbar/index",
+    "van-tabbar-item":"../pages/dist/tabbar-item/index"
+  }
+}

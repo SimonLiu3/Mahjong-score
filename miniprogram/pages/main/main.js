@@ -2,6 +2,7 @@
 import Dialog from '../dist/dialog/dialog'
 import Notify from '../dist/notify/notify'
 const app = getApp()
+const CURRENT_ACTIVE_TABBAR = 0
 Page({
   data: {
     groupList: [],
@@ -32,13 +33,26 @@ Page({
       }
     })
   },
-
+  
   onShow: function () {
+    this.getTabBar().init();
     this.getGroup()
+  },
+  onRefresh(){
+    //在当前页面显示导航条加载动画
+    wx.showNavigationBarLoading(); 
+    //显示 loading 提示框。需主动调用 wx.hideLoading 才能关闭提示框
+    wx.showLoading({
+      title: '刷新中...',
+    })
+    this.getGroup();
+  },
+  onPullDownRefresh: function () {
+    //调用刷新时将执行的方法
+    this.onRefresh();
   },
   getGroup() {
     const self = this
-    app.showLoading(self)
     wx.cloud.callFunction({
       name: 'getGroup',
       data: {},
@@ -48,7 +62,12 @@ Page({
         })
       },
       complete() {
-        app.hideLoading(self)
+        //隐藏loading 提示框
+        wx.hideLoading();
+        //隐藏导航条加载动画
+        wx.hideNavigationBarLoading();
+        //停止下拉刷新
+        wx.stopPullDownRefresh();
       }
     })
   },
@@ -130,5 +149,5 @@ Page({
     wx.navigateTo({
       url: `/pages/login/login`
     })
-  }
+  },
 })
