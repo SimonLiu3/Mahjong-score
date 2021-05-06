@@ -6,13 +6,23 @@ const db = cloud.database()
 // 云函数入口函数
 exports.main = async (event, context) => {
   const wxContext = cloud.getWXContext()
+  const MAX_LIMIT = 100
   let userList = await db.collection("userGroup").where({
     groupId: event.groupId
   }).get()
 
-  let roundList = await db.collection('userRoundDetail').where({
+  let countResult = await db.collection('userRoundDetail').where({
     groupId: event.groupId
-  }).get()
+  }).count()
+  let total = countResult.total
+  let batchTimes = Math.ceil(total / 100)
+  let roundList = []
+  for (let i = 0; i < batchTimes; i++) {
+    let tempList = await db.collection('userRoundDetail').where({
+      groupId: event.groupId
+    }).skip(i * MAX_LIMIT).limit(MAX_LIMIT).get()
+    roundList = roundList.concat(tempList.data)
+  }
 
   let userDetailList = []
   for (let item of userList.data) {
@@ -22,15 +32,15 @@ exports.main = async (event, context) => {
     detail.totalNum = 0;
     userDetailList.push(detail)
   }
-  
+
   let deskDetail = {}
   deskDetail.userId = "TaiBanUserId"
   deskDetail.totalScore = 0;
   deskDetail.totalNum = 0;
-
-  if (roundList.data.length) {
+  debugger
+  if (roundList.length) {
     let roundIdList = []
-    for (let item of roundList.data) {
+    for (let item of roundList) {
       // 玩家信息
       for (let detail of userDetailList) {
         if (item.sendUserId == detail.userId) {
@@ -44,7 +54,7 @@ exports.main = async (event, context) => {
         }
       }
       // 台板信息
-      if(item.receiveUserId == deskDetail.userId){
+      if (item.receiveUserId == deskDetail.userId) {
         deskDetail.totalScore = deskDetail.totalScore * 1 + item.score * 1
         deskDetail.totalNum = deskDetail.totalNum * 1 + 1
       }
@@ -53,7 +63,7 @@ exports.main = async (event, context) => {
   // 排序
   userDetailList == [] ? userDetailList : userDetailList.sort((a, b) => a.totalScore < b.totalScore ? 1 : -1)
   // 返回数据
-  let detailInfo= {}
+  let detailInfo = {}
   detailInfo.userDetailList = userDetailList
   detailInfo.deskDetail = deskDetail
   return detailInfo
